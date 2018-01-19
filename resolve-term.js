@@ -3,7 +3,6 @@
  */
 
 
-const qs = require('querystring')
 const URL = require('url')
 const cheerio = require('cheerio')
 const request = require('request-promise')
@@ -19,9 +18,8 @@ const extractors = {
   },
   ontobee: ($, link) => {
     const hostname = getHostname(link)
-    const url = new URL.URL(link)
     const purlLink = hostname === 'www.ontobee.org' ?
-      url.searchParams.get('iri') :
+      new URL.URL(link).searchParams.get('iri') :
       link
 
     const selector = `Class[rdf\\:about="${purlLink}"] > rdfs\\:label`
@@ -29,7 +27,7 @@ const extractors = {
     return value
   },
   ebi: ($, link) => {
-    const selector = `[property=name]`
+    const selector = '[property=name]'
     const value = $(selector).text().trim()
     return value
   },
@@ -50,9 +48,6 @@ function resolveTerm(link) {
   return request(link)
     .then(cheerio.load)
     .then($ => extractor($, link))
-    .then(value => {
-      return value
-    })
 }
 
 function getExtractor(link) {
