@@ -3,7 +3,6 @@
  */
 
 const http = require('http')
-const url = require('url')
 
 const db = require('./database')
 const resolveTerm = require('./resolve-term')
@@ -22,6 +21,18 @@ server.listen(port, (err) => {
 
 function requestHandler(request, response) {
   console.log(request.url)
+
+  // Set CORS headers
+  response.setHeader('Access-Control-Allow-Origin', '*')
+  response.setHeader('Access-Control-Request-Method', '*')
+  response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST')
+  response.setHeader('Access-Control-Allow-Headers', 'authorization, content-type')
+
+  if (request.method === 'OPTIONS') {
+    response.writeHead(200)
+    response.end()
+    return
+  }
 
   const url = request.url.slice(1)
 
@@ -46,18 +57,5 @@ function requestHandler(request, response) {
   )
   .catch(err => {
     response.end(JSON.stringify({ ok: false, message: err.toString() }))
-  })
-}
-
-function readAsJSON(stream) {
-  return readAsString(stream).then(JSON.parse)
-}
-
-function readAsString(stream) {
-  return new Promise((resolve, reject) => {
-    let result = ''
-    stream.on('data', chunk => result += chunk)
-    stream.on('end', () => resolve(result))
-    stream.on('error', reject)
   })
 }
