@@ -33,6 +33,12 @@ const extractors = {
     const value = $(selector).text().trim()
     return value
   },
+  sequence: ($, link) => {
+    const selector = '#main_content table > thead > tr > th > h2'
+    const text = $(selector).text()
+    const value = text.slice(0, text.lastIndexOf('(')).trim()
+    return value
+  }
 }
 
 function resolveTerm(link) {
@@ -55,6 +61,7 @@ function getExtractor(link) {
     case 'www.ontobee.org':
     case 'purl.obolibrary.org': return extractors.ontobee
     case 'www.ebi.ac.uk': return extractors.ebi
+    case 'www.sequenceontology.org': return extractors.sequence
   }
   return undefined
 }
