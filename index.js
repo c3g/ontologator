@@ -34,6 +34,8 @@ function requestHandler(request, response) {
     return
   }
 
+  response.setHeader('content-type', 'application/json')
+
   const url = request.url.slice(1)
 
   // We might serve the value from cache, but we'll always update our value
